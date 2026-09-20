@@ -41,6 +41,13 @@ targets:
         com.apple.developer.healthkit: true
         com.apple.developer.healthkit.background-delivery: true
         com.apple.developer.usernotifications.time-sensitive: true
+        # RULE 4 HAZARD. CloudKit is enabled on the app that owns Session, which
+        # carries HealthKit-derived hrBefore/hrAfter plus user text (debriefNote,
+        # Hold.draft). Nothing syncs today because no ModelConfiguration requests
+        # cloudKitDatabase — adding one would push biosignals off-device BY
+        # DEFAULT. Before enabling sync (session 2.14), split into two
+        # ModelConfigurations: CloudKit-backed for plan/preferences, local-only
+        # for Session/Hold, so the biosignal fields structurally cannot leave.
         com.apple.developer.icloud-services: [CloudKit]
         com.apple.developer.icloud-container-identifiers: [iCloud.app.steadyreset]
         com.apple.security.application-groups: [group.app.steadyreset]
