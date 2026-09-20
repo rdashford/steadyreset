@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Read", "Glob", "Grep", "Edit", "Write",
+      "Bash(swift test*)", "Bash(swift build*)", "Bash(xcodegen*)", "Bash(xcodebuild*)",
+      "Bash(xcrun simctl*)", "Bash(git status*)", "Bash(git diff*)", "Bash(git log*)", "Bash(git add*)",
+      "Bash(git commit*)", "Bash(git checkout -b*)", "Bash(git switch*)", "Bash(swiftformat*)", "Bash(swiftlint*)",
+      "Bash(pandoc*)", "Bash(open *.xcodeproj)"
+    ],
+    "deny": [
+      "Bash(git push --force*)", "Bash(git push -f*)", "Bash(git reset --hard*)", "Bash(rm -rf /*)",
+      "Read(./.env)", "Read(./Backend/.env*)", "Read(./**/*.p8)", "Read(./**/*.p12)", "Read(./**/AuthKey*)"
+    ]
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0",
+    "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH": "2"
+  },
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "./scripts/hooks/session-start.sh" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Edit|Write", "hooks": [ { "type": "command", "command": "./scripts/hooks/protect-paths.sh" } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Edit|Write", "hooks": [ { "type": "command", "command": "./scripts/hooks/format-swift.sh" } ] }
+    ],
+    "SubagentStop": [
+      { "hooks": [ { "type": "command", "command": "./scripts/hooks/subagent-stop.sh" } ] }
+    ]
+  }
+}

@@ -48,6 +48,12 @@ targets:
     type: app-extension
     platform: iOS
     sources: [App/SteadyResetWidgets, App/SteadyReset/Intents]
+    # An app extension's bundle ID must be a CHILD of its host app's, not a
+    # sibling. bundleIdPrefix alone yields app.steadyreset.SteadyResetWidgets,
+    # which the installer rejects, so set it explicitly.
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.steadyreset.SteadyReset.Widgets
     dependencies:
       - package: SteadyCore
     info:
@@ -60,16 +66,27 @@ targets:
       properties:
         com.apple.security.application-groups: [group.app.steadyreset]
   SteadyResetWatch:
-    type: application.watchapp2
+    # Modern single-target watchOS app. `application.watchapp2` is the legacy
+    # WatchKit-2 product type that expects a paired extension target; it emits
+    # duplicate binary outputs under the watchsimulator SDK.
+    type: application
     platform: watchOS
     sources: [App/SteadyResetWatch]
+    # Must be a child of WKCompanionAppBundleIdentifier below, or watchOS
+    # refuses to install the app alongside its companion.
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.steadyreset.SteadyReset.watchkitapp
     dependencies:
       - package: SteadyCore
     info:
       path: App/SteadyResetWatch/Info.plist
       properties:
+        # WKApplication marks a modern single-target watchOS app; without it
+        # the bundle builds but simctl/watchOS refuse to install it.
+        # It supersedes the legacy watchapp2 WKRunsIndependentlyOfCompanionApp.
+        WKApplication: true
         WKCompanionAppBundleIdentifier: app.steadyreset.SteadyReset
-        WKRunsIndependentlyOfCompanionApp: true
     entitlements:
       path: App/SteadyResetWatch/SteadyResetWatch.entitlements
       properties:
@@ -78,4 +95,9 @@ schemes:
   SteadyReset:
     build: { targets: { SteadyReset: all } }
     run: { config: Debug }
-    test: { targets: [SteadyCoreTests] }
+    # SteadyCore unit tests are SPM tests, not an Xcode target: run them with
+    # `cd Packages/SteadyCore && swift test`. XCUITest targets get added here
+    # when the first UI test lands (Phase 1).
+  SteadyResetWatch:
+    build: { targets: { SteadyResetWatch: all } }
+    run: { config: Debug }

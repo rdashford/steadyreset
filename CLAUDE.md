@@ -10,8 +10,10 @@ The product spec is `docs/Steady_Reset_PRD_v4.docx` (convert with `pandoc -t mar
 
 ## Build & test
 - `cd Packages/SteadyCore && swift test` — fast unit tests for timing, EMA, baselines, budget. Run before every commit.
-- `xcodegen generate && xcodebuild -scheme SteadyReset -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build`
-- Watch: `-destination 'platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)'`
+- Keep this repo on a local disk (`~/github/SteadyReset`), never in iCloud Drive or another synced folder. iCloud stamps `com.apple.FinderInfo` on the in-repo `.build`, and `codesign` then refuses to sign the test bundle ("resource fork, Finder information, or similar detritus not allowed"), which breaks `swift test` outright.
+- `xcodegen generate && xcodebuild -scheme SteadyReset -destination 'platform=iOS Simulator,name=iPhone 18 Pro' build`
+- Watch: `-scheme SteadyResetWatch -destination 'platform=watchOS Simulator,name=Apple Watch Series 12 (46mm)'`
+- Simulator device names track the installed Xcode (currently 27, with iOS/watchOS 27 runtimes). Check `xcrun simctl list devices available` before assuming a name; the deployment target stays iOS 26 / watchOS 26 regardless.
 - Haptics do not run in the Simulator; verify on device. The ≤2 s launch budget (E1) is measured in Instruments on device.
 
 ## Non-negotiable product rules (from the PRD)

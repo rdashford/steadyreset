@@ -35,7 +35,10 @@ struct HoldMessageIntent: AppIntent {
 struct SteadyShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: StartResetIntent(), phrases: [
-            "Steady Reset", "I need to steady in \(.applicationName)", "Start a reset in \(.applicationName)"
+            // Every AppShortcut phrase must interpolate the app name, or the build
+            // fails validation. "\(.applicationName)" alone still speaks as
+            // "Steady Reset", so the bare utterance is preserved.
+            "\(.applicationName)", "I need to steady in \(.applicationName)", "Start a reset in \(.applicationName)",
         ], shortTitle: "Steady", systemImageName: "wind")
         AppShortcut(intent: StartBreakIntent(), phrases: ["Start a break in \(.applicationName)"], shortTitle: "Break", systemImageName: "pause.circle")
         AppShortcut(intent: HoldMessageIntent(), phrases: ["Hold a message in \(.applicationName)"], shortTitle: "Hold", systemImageName: "envelope.badge.clock")
@@ -47,5 +50,5 @@ struct SteadyShortcuts: AppShortcutsProvider {
 @Observable
 final class IntentBridge {
     static let shared = IntentBridge()
-    var pending: Router.Route?
+    var pending: Route?
 }

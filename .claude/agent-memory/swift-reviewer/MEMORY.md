@@ -1,0 +1,2 @@
+- [Stage 1–2 recurring defects](stage2-recurring-defects.md) — four failure modes that keep reappearing in haptics/breathing code; check all four on any Stage 2 change.
+- [ModelContainer on the launch path](launch-path-modelcontainer.md) — SteadyResetApp's `.modelContainer` is not lazy despite a comment saying it is; re-flag until fixed.
