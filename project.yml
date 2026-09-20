@@ -1,0 +1,81 @@
+# XcodeGen spec. Run `xcodegen generate` in this folder to produce SteadyReset.xcodeproj.
+# Install: `brew install xcodegen`. Never hand-edit the generated .pbxproj; edit this file and regenerate.
+name: SteadyReset
+options:
+  bundleIdPrefix: app.steadyreset
+  deploymentTarget:
+    iOS: "26.0"
+    watchOS: "26.0"
+  xcodeVersion: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    DEVELOPMENT_TEAM: ""   # set your Team ID
+packages:
+  SteadyCore:
+    path: Packages/SteadyCore
+targets:
+  SteadyReset:
+    type: application
+    platform: iOS
+    sources: [App/SteadyReset]
+    dependencies:
+      - package: SteadyCore
+      - target: SteadyResetWidgets
+      - target: SteadyResetWatch
+    info:
+      path: App/SteadyReset/Info.plist
+      properties:
+        CFBundleDisplayName: Steady Reset
+        UIBackgroundModes: [remote-notification]
+        NSHealthShareUsageDescription: "Steady Reset reads heart rate, heart rate variability, resting heart rate, sleep, respiratory rate and wrist temperature from Health to show you your own baselines. Nothing leaves your device."
+        NSHealthUpdateUsageDescription: "Optionally saves each reset to Health as a Mindful Session."
+        NSSpeechRecognitionUsageDescription: "Turns what you say into text on this device so you can talk instead of type."
+        NSMicrophoneUsageDescription: "Lets you speak to the companion and record a secure-base voice note."
+        NSSupportsLiveActivities: true
+        ITSAppUsesNonExemptEncryption: false
+    entitlements:
+      path: App/SteadyReset/SteadyReset.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.background-delivery: true
+        com.apple.developer.usernotifications.time-sensitive: true
+        com.apple.developer.icloud-services: [CloudKit]
+        com.apple.developer.icloud-container-identifiers: [iCloud.app.steadyreset]
+        com.apple.security.application-groups: [group.app.steadyreset]
+  SteadyResetWidgets:
+    type: app-extension
+    platform: iOS
+    sources: [App/SteadyResetWidgets, App/SteadyReset/Intents]
+    dependencies:
+      - package: SteadyCore
+    info:
+      path: App/SteadyResetWidgets/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: App/SteadyResetWidgets/SteadyResetWidgets.entitlements
+      properties:
+        com.apple.security.application-groups: [group.app.steadyreset]
+  SteadyResetWatch:
+    type: application.watchapp2
+    platform: watchOS
+    sources: [App/SteadyResetWatch]
+    dependencies:
+      - package: SteadyCore
+    info:
+      path: App/SteadyResetWatch/Info.plist
+      properties:
+        WKCompanionAppBundleIdentifier: app.steadyreset.SteadyReset
+        WKRunsIndependentlyOfCompanionApp: true
+    entitlements:
+      path: App/SteadyResetWatch/SteadyResetWatch.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+schemes:
+  SteadyReset:
+    build: { targets: { SteadyReset: all } }
+    run: { config: Debug }
+    test: { targets: [SteadyCoreTests] }

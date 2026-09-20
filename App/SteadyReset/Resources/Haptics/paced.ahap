@@ -1,0 +1,14 @@
+{
+  "Version": 1.0,
+  "Metadata": { "Project": "Steady Reset", "Description": "Paced breathing 5.5/min: inhale 3.97s rising, exhale 6.94s falling. One cycle; loop." },
+  "Pattern": [
+    { "Event": { "Time": 0.0, "EventType": "HapticContinuous", "EventDuration": 3.97,
+      "EventParameters": [ { "ParameterID": "HapticIntensity", "ParameterValue": 0.5 }, { "ParameterID": "HapticSharpness", "ParameterValue": 0.2 } ] } },
+    { "ParameterCurve": { "ParameterID": "HapticIntensityControl", "Time": 0.0,
+      "ParameterCurveControlPoints": [ { "Time": 0.0, "ParameterValue": 0.15 }, { "Time": 3.97, "ParameterValue": 0.7 } ] } },
+    { "Event": { "Time": 3.97, "EventType": "HapticContinuous", "EventDuration": 6.94,
+      "EventParameters": [ { "ParameterID": "HapticIntensity", "ParameterValue": 0.5 }, { "ParameterID": "HapticSharpness", "ParameterValue": 0.1 } ] } },
+    { "ParameterCurve": { "ParameterID": "HapticIntensityControl", "Time": 3.97,
+      "ParameterCurveControlPoints": [ { "Time": 0.0, "ParameterValue": 0.7 }, { "Time": 6.94, "ParameterValue": 0.05 } ] } }
+  ]
+}
