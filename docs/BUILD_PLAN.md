@@ -107,6 +107,7 @@ reopened in chat with a stated reason.
 | AD-11  | Fixed voice lines pre-rendered at build time and bundled; user text rendered by cloud TTS at approval time; \`AVSpeechSynthesizer\` fallback in on-device-only mode            | No synthesis on the critical path                                                                                                                            |
 | AD-12  | Append-only \`Event\` log with \`schemaVersion\` alongside summary models; export format defined in Phase 1                                                                    | Research readiness without refactor (PRD 15.1)                                                                                                               |
 | AD-13  | Minimum iOS 26 / watchOS 26                                                                                                                                                    | Current-minus-one at fall 2026 launch; unlocks Foundation Models and current WidgetKit controls                                                              |
+| AD-14  | The SwiftData \`ModelContainer\` comes off the launch path *before* E1 is measured: session 0.6's persistence-spine work is pulled forward ahead of 0.2 (decided 2026-09-22)    | Found in 0.1: \`.modelContainer\` is applied to the \`WindowGroup\` scene, so SwiftUI builds it synchronously before the first frame and before haptic prewarm — a live breach of rule 1 and E1. Measuring E1 first would benchmark an architecture we intend to replace, and force a second Instruments pass on device |
 
 **4. Repository Layout**
 
@@ -144,6 +145,16 @@ SteadyCore tests green; clinician engaged.
 | 0.6    | Persistence spine: ModelContainer off the launch path; Session and Event written at end of a reset; history list                                                                     | 12.3, AD-12 | A completed reset appears in history after relaunch; launch time unchanged | Do three resets; check history                                                                   |
 | 0.7    | Chat session: clinical content package v1 (technique scripts, feeling words, safety copy, EMA items, break script and repair templates) ready for clinician review; brand copy guide | 4, A, B, C  | Documents in docs/; clinician review scheduled                             | Read-through; approve for review                                                                 |
 | 0.8    | On-device model spike: Foundation Models for one-line summaries and a rewrite; quality notes for AD-10                                                                               | 10.5        | Decision recorded: what runs on device at launch                           | Judge samples in chat                                                                            |
+
+**Execution order (AD-14, decided 2026-09-22): run 0.6 before 0.2.** Session
+IDs are unchanged — only the order is. Session 0.1 found that
+\`.modelContainer\` is built synchronously during the first scene evaluation,
+before the first frame and before haptic prewarm, so the launch path 0.2
+measures is not the one we intend to ship. Take 0.6's "ModelContainer off the
+launch path" first, then measure E1 once. The rest of 0.6 (Session/Event
+written at end of a reset, history list) may stay in its original slot if
+splitting it keeps the sitting short; 0.6's own "launch time unchanged"
+criterion becomes "launch time measured" once 0.2 follows it.
 
 **Phase 1 — Alpha: the core loop on both devices (≈ 16 sessions)**
 

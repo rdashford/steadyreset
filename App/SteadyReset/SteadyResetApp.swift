@@ -8,8 +8,9 @@ struct SteadyResetApp: App {
     /// `.modelContainer` below is built synchronously during the first scene
     /// evaluation, i.e. before the first frame and before `prewarm()` runs, so
     /// the reset screen currently CANNOT start haptics before SwiftData loads.
-    /// Moving the container off the critical path is session 0.6 (persistence
-    /// spine) in docs/BUILD_PLAN.md. Measure in 0.2 before assuming a budget.
+    /// Fixing this is session 0.6 (persistence spine), which AD-14 pulls forward
+    /// ahead of 0.2 so E1 is measured once, against the shipping architecture.
+    /// Do not take an Instruments launch number until this is gone.
     @State private var router = Router()
 
     var body: some Scene {
